@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams, useLocation } from 'react-router-dom'
 function VanDetail() {
   const [vanDetails, setVanDetails] = useState([])
   const params = useParams()
+  const location = useLocation()
+console.log (location)
   useEffect(() => {
     fetch(`/api/vans/${params.id}`)
       .then(response => (response.json()))
@@ -11,11 +13,13 @@ function VanDetail() {
 
   console.log(vanDetails.imageUrl)
 
+  const search = location.state?.search || ""
+
   return (
     <div>
 
       {vanDetails ? <div className='m-4'>
-        blue
+        <Link to={`..?${search}`} relative="path" className='hover:underline '> &larr; Back to { location.state.search ? location.state.type:"all "} vans </Link>
         <div className='my-4'>
           <img src={vanDetails.imageUrl} alt='' className='min-w-xs min-h-min rounded-lg'></img>
         </div>

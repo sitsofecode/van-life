@@ -11,7 +11,7 @@ function HostLayout() {
         <div className="m-4">
             <nav className='flex  space-x-6 text-gray-600'>
                 <NavLink to="."
-                end 
+                    end
                     style={({ isActive }) => isActive ? activeStyle : null}
                     className="hover:underline hover:text-black hover:font-medium"
                 >Dashboard</NavLink>
@@ -24,9 +24,9 @@ function HostLayout() {
                     className='hover:underline hover:text-black hover:font-medium'
                 > Vans </NavLink>
                 <NavLink to="/host/reviews"
-                style={({ isActive }) => isActive ? activeStyle : null}
-                className='hover:underline hover:text-black hover:font-medium'
-            > Reviews </NavLink>
+                    style={({ isActive }) => isActive ? activeStyle : null}
+                    className='hover:underline hover:text-black hover:font-medium'
+                > Reviews </NavLink>
             </nav>
             <Outlet />
         </div>
