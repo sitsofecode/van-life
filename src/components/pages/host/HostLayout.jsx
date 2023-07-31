@@ -8,8 +8,8 @@ function HostLayout() {
         color: "#161616"
     }
     return (
-        <div className="m-4">
-            <nav className='flex  space-x-6 text-gray-600'>
+        <div className="">
+            <nav className='flex  space-x-6 text-gray-600 p-8 text-lg bg-mainColor'>
                 <NavLink to="."
                     end
                     style={({ isActive }) => isActive ? activeStyle : null}

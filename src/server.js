@@ -4,6 +4,7 @@ import { createServer, Model } from "miragejs"
 createServer({
     models: {
         vans: Model,
+        users: Model
     },
     seeds(server) {
         server.create("van", {
@@ -12,7 +13,7 @@ createServer({
             description: "The Modest Explorer is a van designed to get you out of the house and into nature. This beauty is equipped with solar panels, a composting toilet, a water tank and kitchenette. The idea is that you can pack up your home and escape for a weekend or even longer!",
             imageUrl: "https://assets.scrimba.com/advanced-react/react-router/modest-explorer.png",
             type: "simple",
-            hostId: "",
+            hostId: "123",
         })
         server.create("van", {
             id: "2", name: "Beach Bum",
@@ -54,6 +55,7 @@ createServer({
             type: "rugged",
             hostId: "123",
         })
+        server.create("user", { id: "123", email: "b@b.com", password: "p123", name: "Bob" })
     },
     routes() {
         this.namespace = "api"
@@ -65,13 +67,35 @@ createServer({
             const id = request.params.id
             return schema.vans.find(id)
         })
-            this.get("/host/vans", (schema, request) => {
+        this.get("/host/vans", (schema, request) => {
             // Hard-code the hostId for now
             return schema.vans.where({ hostId: "123" })
         })
-        this.get("/host/vans/:id" , (schema, request ) =>{
+        this.get("/host/vans/:id", (schema, request) => {
             const id = request.params.id
-            return schema.vans.findBy({id , hostId : "123"})
+            return schema.vans.findBy({ id, hostId: "123" })
+        })
+        this.post("/login", (schema, request) => {
+            const { email, password } = JSON.parse(request.requestBody)
+            // This is an extremely naive version of authentication. Please don't
+            // do this in the real world, and never save raw text passwords
+            // in your database 
+            const foundUser = schema.users.findBy({ email, password })
+            if (!foundUser) {
+                console.log("hello motherFucker")
+                const myBlod = new Blob()
+                const myOptions = { status: 404, statusText: "No user with those credentials found!" }
+                const response = new Response(
+                    myBlod, myOptions
+                )
+                return response
+            }
+            // At the very least, don't send the password back to the client 
+            foundUser.password = undefined
+            return {
+                user: foundUser,
+                token: "Enjoy your pizza, here's your tokens."
+            }
         })
     }
 });

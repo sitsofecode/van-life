@@ -1,37 +1,48 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { Suspense } from 'react'
+import { Await, Link, defer, useLoaderData } from 'react-router-dom';
+import { requireAuth } from '../../../../utils';
+import { getHostVans } from '../../../api';
+
+export async function loader({ request }) {
+    await requireAuth(request)
+    return defer({ hostVans: getHostVans() })
+}
 
 function HostVans() {
-    const [hostVans, setHostVans] = useState()
-    useEffect(() => {
-        fetch("/api/host/vans")
-            .then((response) => response.json())
-            .then((data) => { setHostVans(data.vans) });
-    }, [])
-    console.log(hostVans)
-    const hostVansCard = hostVans?.map((item) => {
-        return (
-            <Link to={`/host/vans/${item.id}`}>
-                <div className='my-8'>
-                    <div className='flex bg-white p-4 rounded-lg'>
-                        <img src={item.imageUrl} alt='' className='h-20 rounded-lg' />
-                        <div className='m-4'>
-                            <h1 className='text-2xl font-medium '> {item.name}</h1>
-                            <p className='mt-1'>$ {item.price}/ day</p>
-                        </div>
+    const hostVansPromise = useLoaderData();
+
+    const hostRenderElements = (hostVans) => {
+        const hostVansEls = hostVans.map(van => (
+            <Link
+                to={van.id} key={van.id}>
+                <div className="flex bg-white p-4 rounded-lg my-5" key={van.id}>
+                    <img src={van.imageUrl} alt='' className='h-20 rounded-lg' />
+                    <div className="m-4">
+                        <h3 className='text-xl font-semibold'>{van.name}</h3>
+                        <p className='mt-1'>${van.price}/day</p>
                     </div>
                 </div>
             </Link>
+        ))
+        return (
+            <>
+                <div className="host-vans-list">
+                    <section>
+                        {hostVansEls}
+                    </section>
+                </div></>
         )
-    })
+    }
+
     return (
-        <div className='m-4  mt-8'>
-            <h1 className='text-3xl font-semibold '>
-                Your listed vans
-            </h1>
-            {hostVansCard}
-        </div>
+        <section className='p-4 bg-mainColor'>
+            <h1 className="text-3xl font-bold">Your listed vans</h1>
+            <Suspense fallback={<h1>Loarding ...</h1>}>
+                <Await resolve={hostVansPromise.hostVans}>
+                    {hostRenderElements}
+                </Await>
+            </Suspense>
+        </section>
     )
 }
-
 export default HostVans

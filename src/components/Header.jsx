@@ -4,11 +4,11 @@ import NavBar from './NavBar'
 
 function Header() {
   return (
-    <div className='flex justify-between  bg-headerColor p-8 w-full'>
-        <div>
-          <Link to ="/" > <img src='logog.png' alt='' className='w-32'></img></Link>
-        </div>
-        <NavBar/>
+    <div className='flex justify-between  bg-mainColor lg:p-8 p-4 w-full'>
+      <div>
+        <Link to="/" > <img src='/logog.png' alt='' className='w-32'></img></Link>
+      </div>
+      <NavBar />
     </div>
   )
 }

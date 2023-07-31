@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useParams, useLocation } from 'react-router-dom'
-function VanDetail() {
-  const [vanDetails, setVanDetails] = useState([])
-  const params = useParams()
-  const location = useLocation()
-console.log (location)
-  useEffect(() => {
-    fetch(`/api/vans/${params.id}`)
-      .then(response => (response.json()))
-      .then(data => setVanDetails(data.vans));
-  }, [params.id])
+import React from 'react'
+import { Link, useLocation, useLoaderData } from 'react-router-dom'
+import { getVans } from '../../api'
 
-  console.log(vanDetails.imageUrl)
+export function vanDetailsLoader({ params }) {
+  return getVans(params.id);  
+
+}
+
+function VanDetail() {
+  const vanDetails = useLoaderData();
+  const location = useLocation();
+
+  // useEffect(() => {
+  //   fetch(`/api/vans/${params.id}`)
+  //     .then(response => (response.json()))
+  //     .then(data => setVanDetails(data.vans));
+  // }, [params.id])
+
 
   const search = location.state?.search || ""
 
@@ -19,7 +24,7 @@ console.log (location)
     <div>
 
       {vanDetails ? <div className='m-4'>
-        <Link to={`..?${search}`} relative="path" className='hover:underline '> &larr; Back to { location.state.search ? location.state.type:"all "} vans </Link>
+        <Link to={`..?${search}`} relative="path" className='hover:underline '> &larr; Back to {location.state.search ? location.state.type : "all "} vans </Link>
         <div className='my-4'>
           <img src={vanDetails.imageUrl} alt='' className='min-w-xs min-h-min rounded-lg'></img>
         </div>
@@ -28,7 +33,8 @@ console.log (location)
         <p className=' my-4'><span className='font-bold text-xl'>${vanDetails.price}</span>/ day</p>
         <p>{vanDetails.description}</p>
         <button className='bg-amber-500 text-white text-lg font-semibold p-2 px-auto w-full mt-8  rounded hover:translate-y-1'>Rent this van </button>
-      </div> : <h2 className='text-center'> Loarding ... </h2>}
+      </div> :
+        <h2 className='text-center p-4 font-semibold'> Loarding ... </h2>}
     </div>
   )
 }

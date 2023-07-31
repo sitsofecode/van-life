@@ -1,5 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useParams } from "react-router-dom";
+import React from "react";
+import { Link, NavLink, Outlet, useLoaderData } from "react-router-dom";
+import { requireAuth } from '../../../../utils';
+import { getHostVans } from '../../../api';
+
+
+export async function loader({ params , request }) {
+    await requireAuth(request)
+    return getHostVans(params.id)
+}
+
 
 function HostDetailsLayout() {
     const activeStyle = {
@@ -8,14 +17,7 @@ function HostDetailsLayout() {
         color: "#161616"
     }
 
-    const params = useParams();
-    const [hostVandetail, setHostVanDetails] = useState();
-    useEffect(() => {
-        fetch(`/api/vans/${params.id}`)
-            .then(response => (response.json()))
-            .then(data => setHostVanDetails(data.vans));
-    }, [params.id])
-
+    const hostVandetail = useLoaderData();
     if (!hostVandetail) {
         return (<div>
             Loarding ...
